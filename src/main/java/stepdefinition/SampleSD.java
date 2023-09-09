@@ -4,16 +4,17 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import io.restassured.specification.ResponseSpecification;
 import org.junit.Assert;
+import utility.POJO.CreateUserRequestBody;
+
+import java.io.IOException;
 
 import static io.restassured.RestAssured.given;
-import static io.restassured.RestAssured.responseSpecification;
 import static utility.JsonPathUtil.getJsonObject;
 import static utility.SpecBuilderObject.getSampleUserSpec;
 
@@ -23,12 +24,12 @@ public class SampleSD {
     RequestSpecification listUserRequest;
     static Response response;
     static String result;
-
+    CreateUserRequestBody createUserRequestBody;
     static ResponseSpecification responseSpecification;
     RequestSpecification createUserRequest;
 
     @Given("List User given request is created with query parameter")
-    public void listUserGivenRequestIsCreatedWithQueryParameter() {
+    public void listUserGivenRequestIsCreatedWithQueryParameter() throws IOException {
 
         requestSpec = getSampleUserSpec()
                 .addQueryParam("page", "2")
@@ -47,7 +48,8 @@ public class SampleSD {
     public void theAPICallGotSuccessWithStatusCode(int statusCode) {
 
         responseSpecification
-                = new ResponseSpecBuilder().expectStatusCode(statusCode).build();
+                = new ResponseSpecBuilder()
+                .expectStatusCode(statusCode).build();
 
         result = response.then().log().all().spec(responseSpecification).extract().asString();
 
@@ -60,20 +62,31 @@ public class SampleSD {
 
         int actual = (Integer) getJsonObject(result,"data.size()");
 
+       /* Integer i = 10;
+        i.intValue(); //  unboxing /  unwrapping
+        int x = i; // auto unboxing / auto unwrapping
+        */
+
         System.out.println(actual);
         Assert.assertEquals("", expectedUsers, actual);
     }
 
     @Given("Create User given request is created")
-    public void createUserGivenRequestIsCreated() {
+    public void createUserGivenRequestIsCreated() throws IOException {
 
         requestSpec = getSampleUserSpec().build();
 
-        createUserRequest = given().log().all().spec(requestSpec)
+      /*  createUserRequest = given().log().all().spec(requestSpec)
                 .body("{\n" +
                         "    \"name\": \"morpheus\",\n" +
                         "    \"job\": \"leader\"\n" +
-                        "}");
+                        "}");*/
+        CreateUserRequestBody ob = new CreateUserRequestBody();
+        ob.setName("Dev");
+        ob.setJob("Trainer");
+
+        createUserRequest = given().log().all().spec(requestSpec)
+                .body(ob);
     }
 
     @When("user calls List user Request with POST http request")
@@ -104,4 +117,24 @@ public class SampleSD {
         System.out.println(actual);
         Assert.assertEquals("", expected, actual);
     }
+
+    @Given("^Create User given request is created with (.+) and (.+)$")
+    public void createUserGivenRequestIsCreatedWithAnd(String name, String job) throws IOException {
+
+        requestSpec = getSampleUserSpec().build();
+
+        createUserRequestBody = new CreateUserRequestBody();
+        createUserRequestBody.setName(name);
+        createUserRequestBody.setJob(job);
+
+        createUserRequest = given().log().all().spec(requestSpec)
+                .body(createUserRequestBody);
+    }
+
+   /* @And("{string} is as expected")
+    public void isAsExpected(String jsonPath) {
+
+        String expected = createUserRequestBody.ge
+
+    }*/
 }

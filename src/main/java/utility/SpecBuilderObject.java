@@ -3,13 +3,16 @@ package utility;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.specification.RequestSpecification;
 
+import java.io.IOException;
+
+import static utility.ConfigReader.getUrl;
+
 public class SpecBuilderObject {
 
-    static String baseUrl = "https://reqres.in/";
-    public static RequestSpecBuilder getSampleUserSpec()
-    {
+
+    public static RequestSpecBuilder getSampleUserSpec() throws IOException {
         RequestSpecBuilder requestSpec = new RequestSpecBuilder()
-                .setBaseUri(baseUrl)
+                .setBaseUri(getUrl())
                 .setAccept("application/json")
                 .setContentType("application/json");
 
