@@ -1,4 +1,4 @@
-package utility.POJO;
+package utility.POJO.sample;
 
 public class CreateUserRequestBody {
 

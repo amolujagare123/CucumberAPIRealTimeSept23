@@ -10,7 +10,7 @@ import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import io.restassured.specification.ResponseSpecification;
 import org.junit.Assert;
-import utility.POJO.CreateUserRequestBody;
+import utility.POJO.sample.CreateUserRequestBody;
 
 import java.io.IOException;
 
